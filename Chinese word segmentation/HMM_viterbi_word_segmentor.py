@@ -61,21 +61,22 @@ if __name__ == '__main__':
     hidden_states = 'BMES'
 
     # initial probability vector of hidden states
-    initial_hidden_states_pro_vec = pickle.load(open('prob_start.p', 'r'))
+    initial_hidden_states_pro_vec = pickle.load(open('prob_start_unix.p', 'br'))
 
     # transition probability matrix of hidden states
-    hidden_state_trans_pro_mat = pickle.load(open('prob_trans.p', 'r'))
+    hidden_state_trans_pro_mat = pickle.load(open('prob_trans_unix.p', 'br'))
 
     # generation probability matrix of observation sequence
-    observation_seq_gen_pro_mat = pickle.load(open('prob_emit.p', 'r'))
+    observation_seq_gen_pro_mat = pickle.load(open('prob_emit_unix.p', 'br'))
 
     # for generating example data
     for h_s in hidden_states:
-        print('='*10 + '>' + h_s)
+        # print('='*10 + '>' + h_s)
         top_three = sorted(observation_seq_gen_pro_mat[h_s].items(), key=itemgetter(1), reverse=True)[0:3]
         for w in top_three:
-            print(w[0].encode('utf-8'))
-            print(observation_seq_gen_pro_mat[h_s][w[0]])
+            # print(w[0].encode('utf-8'))
+            # print(observation_seq_gen_pro_mat[h_s][w[0]])
+            pass
 
     #  previous states at time t-1
     prev_status = {
@@ -85,6 +86,8 @@ if __name__ == '__main__':
         'E': 'BM'
     }
 
-    for test_sentence in [u'我喜欢吃苹果', u'许巍的歌非常好听']:
+with open('input.txt', 'r') as f:
+    lines = f.read().splitlines()
+    for test_sentence in lines:
         prob, best_path_list = viterbi(test_sentence, hidden_states, initial_hidden_states_pro_vec, hidden_state_trans_pro_mat, observation_seq_gen_pro_mat)
-        print(' '.join(list(cut(test_sentence, best_path_list))))
+        print('|'.join(list(cut(test_sentence, best_path_list))))
